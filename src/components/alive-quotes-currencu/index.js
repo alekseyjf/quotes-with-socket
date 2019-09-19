@@ -10,18 +10,20 @@ const api = new Service();
 
 const AliveQuotesCurrency = () => {
   const [state, setState] = useContext(CurrencyContext);
-  const {visibleAliveList, visibleAliveListWithInfo} = state;
-
-  const values = visibleAliveList.reduce((accum, item) => {
-    accum.push(...Object.values(item));
-    return accum
-  }, [])
+  const {visibleAliveListWithInfo} = state;
+  console.log(state);
+  const [values, setValues] = useState([])
+  console.log(values);
+  const listSymbols = values.reduce((list, item) => {
+    list.push(item.symbol);
+    return list
+  }, []);
 
   useEffect(() => {
     if (values.length === 0) {
       api.getCurrencyInfo(values.join())
       .then(({data}) => {
-        setState(state => ({...state, visibleAliveListWithInfo: data}))
+        setValues(data)
       })
 
     }
@@ -29,52 +31,39 @@ const AliveQuotesCurrency = () => {
 
   useEffect(() => {
 
-    client.emit('subscribe', values);
+    client.emit('subscribe', listSymbols);
     return () => {
-      client.emit('unsubscribe', values);
+      client.emit('unsubscribe', listSymbols);
     }
   });
 
   useEffect(() => {
     client.on('quotes', ({msg}) => {
-        if (visibleAliveListWithInfo.length !== 0) {
-          console.log(visibleAliveListWithInfo.length);
-          // setState(state => ({
-          //   ...state,
-          //   visibleAliveListWithInfo: replaceArr(visibleAliveListWithInfo, msg)
-          // }))
-          replaceArr(visibleAliveListWithInfo, msg)
-
+        if (values.length !== 0) {
+          // setValues(replaceArr(values, msg))
+          replaceArr(values, msg)
         }
       }
     );
-  }, [visibleAliveListWithInfo])
+  }, [values])
 
   const replaceArr = (arr, data) => {
-    // console.log(data);
     const idx = arr.findIndex(el => el.symbol === data.symbol);
     if (idx >= 0) {
-      const ar = [
+
+      return [
         ...arr.slice(0, idx),
         data,
         ...arr.slice(idx + 1)
-      ]
-      console.log(ar);
-      // return [
-      //   ...arr.slice(0, idx),
-      //   data,
-      //   ...arr.slice(idx + 1)
-      // ];
-
-      // setState(state => ({ ...state, visibleAliveListWithInfo: ar }) )
-
+      ];
     }
+    return arr
   }
 
   return (
     <table>
       {
-        visibleAliveListWithInfo.map((item) => {
+        values.map((item) => {
           const {symbol, ask, bid, change} = item;
 
           return (

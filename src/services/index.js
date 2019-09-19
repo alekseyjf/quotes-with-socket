@@ -10,7 +10,7 @@ export default class Service {
       throw new Error(`error by url ${url}, received ${res.statusText}`)
     }
 
-    return await res;
+    return res;
   }
   getQuotesList = async (url='') => {
     const res = this.getRes(`quotesList${url}`);
@@ -21,10 +21,14 @@ export default class Service {
     return res
   }
   getCurrencyInfo = async (url) => {
-    const res = this.getRes(`quotesTick?q=${url}`);
+    const res = this.getRes(`quotesTick`);
+    return res
+  }
+  getCurrencySymbol = async () => {
+    const res = this.getRes(`quotesTick?f=f`);
     return res
   }
 }
-
+//https://quotes.instaforex.com/api/quotesTick?f=f
 //quotesTick?q=EURGBP
 
