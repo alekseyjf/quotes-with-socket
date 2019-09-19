@@ -1,0 +1,8 @@
+.fas {
+  font-family: Fontawesome;
+}
+
+.col_space-between {
+  display: flex;
+  justify-content: space-between;
+}
