@@ -7,11 +7,14 @@ const CurrencyContext = React.createContext([{}, ()=>{}])
 
 const CurrencyProvider = (props) => {
   const [state, setState] = useState({
+    currentPage: 1,
     listSymbol: [],
     listFullSymbol: [],
     loading: true,
     index: null,
-    infoCurrency: null
+    infoCurrency: null,
+    visibleAliveList: [],
+    visibleAliveListWithInfo: []
   });
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import Search from "../search";
 import QuotesList from "../quotes-list";
 import Pagination from "../pagination";
@@ -9,17 +9,17 @@ import InfoCurrency from "../info-currency";
 import AliveQuotesCurrency from "../alive-quotes-currencu";
 
 const App = () => {
-  const [currencyState] = useContext(CurrencyContext)
+  const [state, setState] = useContext(CurrencyContext)
 
-  const {listSymbol, loading, infoCurrency} = currencyState;
+  const {listSymbol, loading, infoCurrency, visibleAliveList, currentPage} = state;
   const [bufferSerch, setBufferSerch] = useState('')
-  const [currentPage, setCurrentPage] = useState(1)
+  // const [currentPage, setCurrentPage] = useState(1)
   const [listPerPage] = useState(10);
 
   // searching
   const onSearchItems = (val) => {
-    setBufferSerch(val)
-    setCurrentPage(1)
+    setBufferSerch(val);
+    setState(state => ({...state, currentPage: 1}))
   };
 
   const visibleItems = (list, temp) => {
@@ -37,22 +37,16 @@ const App = () => {
   const indexOfLastItem = currentPage * listPerPage;
   const indexOfFirstItem = indexOfLastItem - listPerPage;
   const totalItemsPagination = Math.ceil(visibleList.length / listPerPage)
-
   const currentList = visibleList.slice(indexOfFirstItem, indexOfLastItem)
 
-
-  // change page
-  const paginateArrow = (curPage, operator) => {
-    if (operator === "+") {
-      if (curPage !== totalItemsPagination) {
-        setCurrentPage(++curPage)
-      }
-    } else if (operator === "-") {
-      if (curPage !== 1) {
-        setCurrentPage(--curPage)
-      }
+  useEffect(() => {
+    if(visibleAliveList.length === 0) {
+      setState(state => ({...state, visibleAliveList: currentList}))
     }
-  }
+  }, [visibleAliveList]);
+  useEffect(() => {
+    setState(state => ({...state, visibleAliveList: currentList}))
+  }, [currentPage]);
 
   if (loading) {
     return <h2>LOADING</h2>
@@ -70,15 +64,13 @@ const App = () => {
             </div>
             <Pagination
               totalItems={totalItemsPagination}
-              currentPage={currentPage}
-              paginateArrow={paginateArrow}
             />
           </div>
         </div>
         {openInfoCurrency}
       </div>
       <div className="row">
-        <AliveQuotesCurrency />
+        <AliveQuotesCurrency/>
       </div>
     </div>
   )
