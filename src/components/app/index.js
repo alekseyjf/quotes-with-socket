@@ -11,7 +11,13 @@ import AliveQuotesCurrency from "../alive-quotes-currencu";
 const App = () => {
   const [state, setState] = useContext(CurrencyContext)
 
-  const {listSymbol, loading, infoCurrency, visibleAliveList, currentPage} = state;
+  const {
+    listSymbol,
+    loading,
+    infoCurrency,
+    visibleAliveList,
+    currentPage
+  } = state;
   const [bufferSerch, setBufferSerch] = useState('')
   // const [currentPage, setCurrentPage] = useState(1)
   const [listPerPage] = useState(10);
@@ -39,14 +45,14 @@ const App = () => {
   const totalItemsPagination = Math.ceil(visibleList.length / listPerPage)
   const currentList = visibleList.slice(indexOfFirstItem, indexOfLastItem)
 
-  useEffect(() => {
-    if(visibleAliveList.length === 0) {
-      setState(state => ({...state, visibleAliveList: currentList}))
-    }
-  }, [visibleAliveList]);
-  useEffect(() => {
-    setState(state => ({...state, visibleAliveList: currentList}))
-  }, [currentPage]);
+  // useEffect(() => {
+  //   if(visibleAliveList.length === 0) {
+  //     setState(state => ({...state, visibleAliveList: currentList}))
+  //   }
+  // }, [visibleAliveList]);
+  // useEffect(() => {
+  //   setState(state => ({...state, visibleAliveList: currentList}))
+  // }, [currentPage]);
 
   if (loading) {
     return <h2>LOADING</h2>
